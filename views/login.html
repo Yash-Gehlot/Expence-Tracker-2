@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h2>Login</h2>
+    <form id="loginForm">
+      <label for="email">Email:</label><br />
+      <input type="email" id="email" name="email" required /><br /><br />
+      <label for="password">Password:</label><br />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+      /><br /><br />
+      <button type="submit" style="background-color: skyblue">Login</button>
+    </form>
+    <a href="forgotPassword.html">Forgot Password?</a>
+
+    <p id="message" style="color: red"></p>
+    <a href="signup.html">Don't have an Account Signup NOW</a>
+
+    <script>
+      const form = document.getElementById("loginForm");
+      const message = document.getElementById("message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/user/login",
+            {
+              email,
+              password,
+            }
+          );
+
+          if (response.status === 200 && response.data.token) {
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            alert("User logged in successfully!");
+            window.location.href = "expense.html";
+          }
+        } catch (err) {
+          if (err.response) {
+            if (err.response.status === 404) {
+              message.textContent = "User not found!";
+            } else if (err.response.status === 401) {
+              message.textContent = "Incorrect password!";
+            } else {
+              message.textContent = "Login failed. Please try again.";
+            }
+          } else {
+            message.textContent = "Backend not connected yet!";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
