@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Expense = require("./expenseModel");
+const ForgotPassword = require("./forgotPassModel");
 
 const User = sequelize.define(
   "User",
@@ -44,6 +45,9 @@ const User = sequelize.define(
 
 User.hasMany(Expense, { foreignKey: "userId" });
 Expense.belongsTo(User, { foreignKey: "userId" });
+
+User.hasMany(ForgotPassword);
+ForgotPassword.belongsTo(User);
 
 module.exports = Expense;
 module.exports = User;

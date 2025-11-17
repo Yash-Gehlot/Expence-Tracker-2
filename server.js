@@ -1,16 +1,20 @@
 const express = require("express");
-require("dotenv").config();
-const db = require("./config/db");
+const app = express();
 
-const cors = require("cors");
+require("dotenv").config();
+
+const db = require("./config/db");
 const path = require("path");
 
-const app = express();
+const cors = require("cors");
 app.use(cors());
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "views")));
 
+// default Route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "login.html"));
 });
