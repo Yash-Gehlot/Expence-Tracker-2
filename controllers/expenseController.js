@@ -4,7 +4,7 @@ const sequelize = require("../config/db");
 const makeCategory = require("../config/gimini-category");
 
 exports.addExpense = async (req, res) => {
-  const t = await sequelize.transaction(); // START transaction
+  const t = await sequelize.transaction();  
 
   try {
     const { amount, category, description, note } = req.body;

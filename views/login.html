@@ -70,6 +70,7 @@
           localStorage.setItem("token", response.data.token);
 
           // Redirect to expense page
+          alert("Login successfully.");
           window.location.href = "expense.html";
         } catch (error) {
           errorMsg.textContent =

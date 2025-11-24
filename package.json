@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "@google/genai": "^1.30.0",
+    "@google/generative-ai": "^0.24.1",
     "bcrypt": "^6.0.0",
     "cashfree": "^1.0.1",
     "cashfree-pg": "^5.1.0",

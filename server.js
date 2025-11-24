@@ -36,7 +36,7 @@ const forgotPasswordRoutes = require("./routes/ForgetPassRoutes");
 app.use("/password", forgotPasswordRoutes);
 
 const PORT = process.env.PORT;
-// app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 (async () => {
   try {
