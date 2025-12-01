@@ -3,26 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up - Expense Tracker</title>
-    <link rel="stylesheet" href="/login/loginSignup.css" />
+    <title>Login - Expense Tracker</title>
+    <link rel="stylesheet" href="./loginSignup.css" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
   <body class="auth-page-body">
     <div class="auth-container">
-      <h2>Create Account</h2>
+      <h2>Welcome Back</h2>
 
-      <form id="signupForm" class="auth-form">
-        <div class="auth-form-group">
-          <label for="name">Full Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Enter your full name"
-            required
-          />
-        </div>
-
+      <form id="loginForm" class="auth-form">
         <div class="auth-form-group">
           <label for="email">Email Address</label>
           <input
@@ -40,47 +29,54 @@
             type="password"
             id="password"
             name="password"
-            placeholder="Create a password"
+            placeholder="Enter your password"
             required
           />
         </div>
 
-        <button type="submit">Create Account</button>
+        <button type="submit">Login</button>
       </form>
 
       <div id="errorMsg" class="auth-error-message" style="display: none"></div>
 
       <div class="auth-links">
-        <p>Already have an account? <a href="/login/login.html">Login</a></p>
+        <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        <p>
+          <a href="forgotPassword.html">Forgot Password?</a>
+        </p>
       </div>
     </div>
 
     <script>
-      const form = document.getElementById("signupForm");
+      const form = document.getElementById("loginForm");
       const errorMsg = document.getElementById("errorMsg");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
 
         errorMsg.style.display = "none";
 
         try {
-          await axios.post("http://localhost:3000/user/signup", {
-            name,
-            email,
-            password,
-          });
+          const response = await axios.post(
+            "http://localhost:3000/user/login",
+            {
+              email,
+              password,
+            }
+          );
 
-          // Show success and redirect
-          alert("Account created successfully! Please login.");
-          window.location.href = "/login/login.html";
+          // Store token
+          localStorage.setItem("token", response.data.token);
+
+          // Redirect to expense page
+          alert("Login successfully.");
+          window.location.href = "/index.html";
         } catch (error) {
           errorMsg.textContent =
-            error.response?.data?.message || "Signup failed. Please try again.";
+            error.response?.data?.message || "Login failed. Please try again.";
           errorMsg.style.display = "block";
         }
       });

@@ -10,12 +10,6 @@ export const addExpense = async (req, res) => {
     const { amount, category, description, note } = req.body;
     const userId = req.user.id;
 
-    let finalCategory =
-      category && category.trim() !== ""
-        ? category
-        : await makeCategory(description);
-
-    // Fetch real Sequelize user instance
     const user = await User.findByPk(userId, { transaction: t });
 
     if (!user) {
@@ -23,11 +17,10 @@ export const addExpense = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Create expense inside transaction
     const expense = await Expense.create(
       {
         amount,
-        category: finalCategory,
+        category,
         description,
         note,
         userId: userId,
@@ -35,7 +28,6 @@ export const addExpense = async (req, res) => {
       { transaction: t }
     );
 
-    // Update user total expense inside same transaction
     await user.update(
       {
         totalExpense: user.totalExpense + Number(amount),
@@ -43,7 +35,6 @@ export const addExpense = async (req, res) => {
       { transaction: t }
     );
 
-    // Commit transaction
     await t.commit();
 
     res.status(200).json({
@@ -53,7 +44,6 @@ export const addExpense = async (req, res) => {
   } catch (error) {
     console.error("Add expense error:", error);
 
-    // Rollback if any error occurs
     await t.rollback();
 
     res.status(500).json({ message: "Error adding expense" });

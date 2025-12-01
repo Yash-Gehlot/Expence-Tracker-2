@@ -1,54 +1,39 @@
-import express from "express";
-import dotenv from "dotenv";
-import db from "./config/db.js";
-import path from "path";
-import cors from "cors";
-import { fileURLToPath } from "url";
+import express from "express"; //Imports the Express framework to build the web server.
+import dotenv from "dotenv"; // Imports dotenv to load environment variables from a .env file.
+import path from "path"; //Imports Node's path module to handle file/folder paths.
+import { fileURLToPath } from "url"; // Imports a utility to convert file URLs to regular file paths (needed for ES modules).
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import userRoutes from "./routes/userRoutes.js";
+import expenseRoutes from "./routes/expenseRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import premiumRoutes from "./routes/premiumRoutes.js";
+import forgotPasswordRoutes from "./routes/ForgetPassRoutes.js";
+
+const PORT = process.env.PORT || 3000;
+// const __filename = fileURLToPath(import.meta.url); //Gets the current file's directory path (ES modules don't have __dirname by default).
+// const __dirname = path.dirname(__filename);
 
 dotenv.config({ quiet: true });
 
 const app = express();
 
-app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true })); //Middleware to parse URL-encoded form data from requests.
+app.use(express.json()); //Middleware to parse JSON data from request bodies.
 
-// Root route - redirect to login BEFORE serving static files
-app.get("/", (req, res) => {
-  res.redirect("/login/login.html");
-});
+// app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "views")));
 
-// Serve static files from views folder
-app.use(express.static(path.join(__dirname, "views")));
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, "views", "index.html"));
+// });
 
-// ROUTES
-import userRoutes from "./routes/userRoutes.js";
+app.use(express.static("public"));
+app.use(express.static("views"));
+
 app.use("/user", userRoutes);
-
-import expenseRoutes from "./routes/expenseRoutes.js";
 app.use("/expense", expenseRoutes);
-
-import paymentRoutes from "./routes/paymentRoutes.js";
 app.use("/payment", paymentRoutes);
-
-import premiumRoutes from "./routes/premiumRoutes.js";
 app.use("/premium", premiumRoutes);
-
-import forgotPasswordRoutes from "./routes/ForgetPassRoutes.js";
 app.use("/password", forgotPasswordRoutes);
 
-// START SERVER
-const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// DB SYNC
-(async () => {
-  try {
-    await db.sync({ force: false });
-  } catch (error) {
-    console.log(error);
-  }
-})();
