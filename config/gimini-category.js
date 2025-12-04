@@ -16,7 +16,7 @@ Description: "${prompt}"
 Reply with ONLY the category word, nothing else.`
     );
 
-    const response = await result.response;
+    const response = result.response;
     const category = response.text().trim().toLowerCase();
 
     return category;

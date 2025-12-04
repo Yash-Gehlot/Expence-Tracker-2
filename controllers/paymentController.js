@@ -6,6 +6,7 @@ import User from "../models/userModel.js";
 export const createOrder = async (req, res) => {
   try {
     const razorpay = new Razorpay({
+      //Creates Razorpay instance with API credentials
       key_id: process.env.RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
@@ -15,7 +16,7 @@ export const createOrder = async (req, res) => {
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
-    const order = await razorpay.orders.create(options);
+    const order = await razorpay.orders.create(options); // calls Razorpay API and creates an order:
 
     res.status(200).json({
       orderId: order.id,
@@ -31,6 +32,7 @@ export const createOrder = async (req, res) => {
 
 export const verifyPayment = async (req, res) => {
   try {
+    //After user completes payment, Razorpay sends:
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
     const userId = req.user.id;
@@ -56,4 +58,3 @@ export const verifyPayment = async (req, res) => {
     res.status(500).json({ success: false, message: "Verification failed" });
   }
 };
-// export default { createOrder, verifyPayment };

@@ -39,7 +39,7 @@ const User = sequelize.define(
   {
     tableName: "users",
     timestamps: false, // Disabled to match existing database schema
-    freezeTableName: true, // Prevent Sequelize from pluralizing table name
+    freezeTableName: true,  
   }
 );
 

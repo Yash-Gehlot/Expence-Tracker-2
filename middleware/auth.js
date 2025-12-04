@@ -1,15 +1,14 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
-export const authenticateToken = async (req, res, next)=> {
+export const authenticateToken = async (req, res, next) => {
   try {
-    const authHeader = req.header("Authorization");
+    const authHeader = req.header("Authorization"); //reads the Authorization header from the HTTP request.
 
     let token;
     if (authHeader && authHeader.startsWith("Bearer ")) {
+      //checking if token exist in header or not?
       token = authHeader.split(" ")[1];
-    } else {
-      token = req.query.token || req.body.token;
     }
 
     if (!token) {
@@ -28,10 +27,10 @@ export const authenticateToken = async (req, res, next)=> {
       return res.status(401).json({ message: "User not found." });
     }
 
-    req.user = user;
+    req.user = user; // This attaches user data to the request object, making it available in next functions.
     next();
   } catch (err) {
     console.error("Auth error:", err.message);
     return res.status(403).json({ message: "Invalid token." });
   }
-}
+};

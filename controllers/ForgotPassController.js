@@ -9,7 +9,7 @@ export const forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(200).json({ message: "If email exists, link sent." });
+      return res.status(200).json({ message: "If email exists, link sent." }); // not reveal whether an account exists."
     }
 
     const request = await ForgotPassword.create({
@@ -19,7 +19,7 @@ export const forgotPassword = async (req, res) => {
 
     const resetLink = `http://localhost:3000/password/resetpassword/${request.id}`;
 
-    const client = Sib.ApiClient.instance;
+    const client = Sib.ApiClient.instance; //Sets up authentication with Sendinblue API
     client.authentications["api-key"].apiKey = process.env.SENDINBLUE_API_KEY;
 
     const tranEmailApi = new Sib.TransactionalEmailsApi();

@@ -39,19 +39,3 @@ const Expense = sequelize.define(
 );
 
 export default Expense;
-// const db = require("../config/db");
-
-// const Expense = {
-//   add: (amount, category, description, userId, callback) => {
-//     const sql =
-//       "INSERT INTO Dailyexp (amount, category, description, user_id) VALUES (?, ?, ?, ?)";
-//     db.query(sql, [amount, category, description, userId], callback);
-//   },
-
-//   getAll: (userId, callback) => {
-//     const sql = "SELECT * FROM Dailyexp WHERE user_id = ?";
-//     db.query(sql, [userId], callback);
-//   },
-// };
-
-// module.exports = Expense;

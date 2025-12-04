@@ -4,20 +4,20 @@ import sequelize from "../config/db.js";
 import makeCategory from "../config/gimini-category.js";
 
 export const addExpense = async (req, res) => {
-  const t = await sequelize.transaction();
+  const t = await sequelize.transaction(); //Creates a transaction
 
   try {
     const { amount, category, description, note } = req.body;
     const userId = req.user.id;
 
-    const user = await User.findByPk(userId, { transaction: t });
+    const user = await User.findByPk(userId);
 
     if (!user) {
-      await t.rollback();
       return res.status(404).json({ message: "User not found" });
     }
 
     const expense = await Expense.create(
+      // OPERATIONS
       {
         amount,
         category,
@@ -29,22 +29,22 @@ export const addExpense = async (req, res) => {
     );
 
     await user.update(
+      // OPERATIONS
       {
         totalExpense: user.totalExpense + Number(amount),
       },
       { transaction: t }
     );
 
-    await t.commit();
+    await t.commit(); //Saves all changes permanently - only if everything succeeded.
 
     res.status(200).json({
       message: "Expense added successfully",
-      expenseId: expense.id,
     });
   } catch (error) {
     console.error("Add expense error:", error);
 
-    await t.rollback();
+    await t.rollback(); //Cancels all changes - if anything failed.
 
     res.status(500).json({ message: "Error adding expense" });
   }
@@ -55,7 +55,7 @@ export const getExpenses = async (req, res) => {
     const userId = req.user.id;
 
     const page = parseInt(req.query.page) || 1; // page = which page user wants
-    const limit = parseInt(req.query.limit) || 5; // how many items per page
+    const limit = parseInt(req.query.limit) || 5; // how many rows per page
     const offset = (page - 1) * limit; // how many rows to skip
 
     const { count, rows } = await Expense.findAndCountAll({
@@ -65,7 +65,7 @@ export const getExpenses = async (req, res) => {
       order: [["id", "DESC"]],
     });
 
-    const totalPages = Math.ceil(count / limit);
+    const totalPages = Math.ceil(count / limit); // Math.ceil(Round UP) Math.floor (Round DOWN)
 
     res.status(200).json({
       expenses: rows,
@@ -87,7 +87,6 @@ export const deleteExpense = async (req, res) => {
     const expId = req.params.id;
     const userId = req.user.id;
 
-    // Find the expense
     const expense = await Expense.findOne({
       where: { id: expId, userId },
       transaction: t,
@@ -98,7 +97,6 @@ export const deleteExpense = async (req, res) => {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    // Find the user
     const user = await User.findByPk(userId, { transaction: t });
 
     if (!user) {
@@ -106,12 +104,10 @@ export const deleteExpense = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update user.totalExpense
     const newTotal = Number(user.totalExpense) - Number(expense.amount);
 
     await user.update({ totalExpense: newTotal }, { transaction: t });
 
-    // Delete the expense
     await expense.destroy({ transaction: t });
 
     await t.commit();
@@ -135,7 +131,6 @@ export const suggestCategory = async (req, res) => {
       });
     }
 
-    // Call the AI function to generate category
     const category = await makeCategory(description);
 
     res.status(200).json({
@@ -145,7 +140,6 @@ export const suggestCategory = async (req, res) => {
   } catch (error) {
     console.error("Category suggestion error:", error);
     res.status(500).json({
-      success: false,
       message: "Error suggesting category",
       category: "other",
     });
