@@ -69,7 +69,7 @@
         errorMsg.style.display = "none";
 
         try {
-          await axios.post("http://localhost:3000/user/signup", {
+          await axios.post("/user/signup", {
             name,
             email,
             password,
